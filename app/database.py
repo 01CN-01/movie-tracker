@@ -66,7 +66,7 @@ def view_all():
     
     return movies
 
-def filtered_movie(movie_name, genre): # Finish
+def filtered_movie(movie_name, genre):
     conn = get_connection()
     cursor = conn.cursor()
     
@@ -84,6 +84,57 @@ def filtered_movie(movie_name, genre): # Finish
     cursor.execute(query, params)
     
     filtered_data = cursor.fetchall()
-    cursor.close()
+    conn.close()
     
     return filtered_data
+
+def find_to_update_movie(movie_name):
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute(
+        """
+        SELECT * FROM movies
+        WHERE movie_name = ?
+        """,
+        (movie_name,))
+    movie = cursor.fetchone()
+    
+    conn.close()
+    
+    if not movie:
+        return False
+    
+    movie_id = movie[0]
+    
+    return movie_id
+
+def update_movie(new_movie_name, genre, movie_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    query = "UPDATE movies SET"
+    params = []
+    
+    if new_movie_name:
+        query += " movie_name = ?"
+        params.append(new_movie_name)
+    
+    if genre:
+        if new_movie_name:
+            query += ","
+        
+        query += " genre = ?"
+        params.append(genre)
+    
+    query += " WHERE movie_id = ?"
+    params.append(movie_id)
+    
+    cursor.execute(query, params)
+    conn.commit()
+    
+    conn.close()
+        
+
+    
+    

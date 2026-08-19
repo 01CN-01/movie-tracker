@@ -1,11 +1,11 @@
 from fastapi import APIRouter, HTTPException
-from model.movie import MovieCreate, MovieResponse
-from app.database import add_movie, count_movie, view_all, filtered_movie
+from model.movie import MovieCreate, MovieResponse, MovieUpdate
+from app.database import add_movie, count_movie, view_all, filtered_movie, find_to_update_movie, update_movie
 
 movie_router = APIRouter(prefix = "/movie")
 # Add Movie ...........
 # View All ...........
-# Search / Filter 
+# Search / Filter ......    
 # Update
 # Delete
 @movie_router.post("/add-movie")
@@ -15,7 +15,7 @@ def create_movie(movie: MovieCreate):
     if count > 0:
         return {"message": "Movie already exists"}
     else:
-        add_movie(movie.movie, movie.genre)
+        add_movie(movie.movie_name, movie.genre)
         return {"message": "Movie added successfully"}
 
 
@@ -32,7 +32,7 @@ def view_movie():
 
 @movie_router.post("/filter-movie", response_model=list[MovieResponse])
 def filter_movies(movie: MovieCreate):
-    filtered_data = filtered_movie(movie.movie, movie.genre)
+    filtered_data = filtered_movie(movie.movie_name, movie.genre)
 
     results = []
     
@@ -40,3 +40,13 @@ def filter_movies(movie: MovieCreate):
         results.append(dict(movie))
     
     return results
+
+@movie_router.post("/update-movie")
+def updated_movie(movie: MovieUpdate):
+    movie_id = find_to_update_movie(movie.movie_name) # Finds ID for movie
+    
+    if not movie_id:
+        return {"message": "Unable to find movie"}
+    else:
+        update_movie(movie.new_movie_name, movie.genre, movie_id) #Updates movie once given the movie_ID
+        return {"message": "Successfully updated movie"}
