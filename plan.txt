@@ -1,0 +1,10 @@
+===== MOVIE TRACKER =====
+
+1. Add movie
+2. View movies
+3. Search movies
+4. Filter movies
+5. Rate movie
+6. Delete movie
+7. Show statistics
+8. Exit
