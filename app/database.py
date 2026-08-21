@@ -135,6 +135,18 @@ def update_movie(new_movie_name, genre, movie_id):
     
     conn.close()
         
-
+def delete_specific_movie(movie_id):
+    conn = get_connection()
+    cursor = conn.cursor()
     
+    cursor.execute(
+        """
+        DELETE FROM movies
+        WHERE movie_id = ?
+        """,
+        (movie_id,)
+        )
+    
+    conn.commit()
+    conn.close()
     
